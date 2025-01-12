@@ -7,7 +7,7 @@ electronics. Some Python and C++ for writing the firmware and software driver
 (respectively - which is quite ironic) to allow INDI capable clients to control
 the device and a bit of CAD and 3D printing to hold it all together.
 
-The flat panel and CAD itself are TBD.
+The flat panel ~~and CAD itself are~~ is TBD.
 
 ## RP2040 Firmware
 
@@ -28,3 +28,9 @@ firmware is available in `indi-driver`.
 The firmware also impelemnts (untested) the flat panel serial protocol found in 
 [DarkSkyGeek's ascom-flat-panel repo](https://github.com/jlecomte/ascom-flat-panel/)
 so the ASCOM driver found there would very likely control this firmware fine.
+
+## CAD Design
+
+There is a FreeCAD project in the `design` directory along with exported models
+of the current build. This is very much a WIP and the current model is a test 
+design primarily to figure out what needs to be changed for the next revision.
