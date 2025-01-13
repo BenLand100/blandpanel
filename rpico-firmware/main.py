@@ -8,14 +8,21 @@ led = Pin(25, Pin.OUT)
 led.value(1)
 
 # PWM for flat panel
-panel = PWM(Pin(21))
+panel = PWM(Pin(13))
 panel.freq(10000)
 panel.duty_ns(0)
+
+# 5V from 12V regulator (for servo & pico)
+en_5v = Pin(12, Pin.OUT)
+en_5v.value(0)
 
 # PWM servo 500us - 2500us pulse range (make configurable?)
 servo = PWM(Pin(22))
 servo.duty_ns(0) #Servo will ignore
 servo.freq(100)
+
+# Turn on Servo and 5V bus
+en_5v.value(1)
 
 # Analog value proportional to servo angle (optional)
 angle_adc = ADC(2)
@@ -90,11 +97,29 @@ def set_brightness(brightness):
 def get_brightness():
     return BRIGHTNESS
 
+ESTOP = False
+def estop():
+    global ESTOP
+    en_5v.value(0)
+    ESTOP = True
+    
+def allclear():
+    global ESTOP
+    if ESTOP:
+        ESTOP = False
+        en_5v.value(1)
+        
 while True:
     cmd = sys.stdin.readline().upper().strip()
     try:
         if len(cmd) < 2:
             continue
+        elif cmd.startswith('ESTOP'):
+            estop()
+            print('ESTOP: ALLCLEAR REQUIRED TO RESUME MOTION')
+        elif cmd.startswith('ALLCLEAR'):
+            allclear()
+            print('OK')
         elif cmd.startswith('COMMAND:'): # Using this ASCOM driver https://github.com/jlecomte/ascom-flat-panel/
             if cmd == 'COMMAND:PING':
                 print(f'RESULT:PING:OK:{GUID}')
@@ -174,7 +199,11 @@ while True:
             if len(parts) > 1:
                 value = float(parts[1])
                 set_angle(value)
-                print('OK')
+                angle = get_angle()
+                if abs(angle-value) < ANGLE_TOLERANCE:
+                    print('OK')
+                else:
+                    print('FAIL')
             else:
                 angle = get_angle()
                 print(f'{angle}')
