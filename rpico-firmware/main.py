@@ -8,12 +8,12 @@ led = Pin(25, Pin.OUT)
 led.value(1)
 
 # PWM for flat panel
-panel = PWM(Pin(13))
+panel = PWM(Pin(15))
 panel.freq(10000)
 panel.duty_ns(0)
 
 # 5V from 12V regulator (for servo & pico)
-en_5v = Pin(12, Pin.OUT)
+en_5v = Pin(14, Pin.OUT)
 en_5v.value(0)
 
 # PWM servo 500us - 2500us pulse range (make configurable?)
